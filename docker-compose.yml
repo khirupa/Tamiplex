@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: plex-data
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: plex
+      MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+      MYSQL_INITDB_SKIP_TZINFO: 1
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "${DB_PORT}:3306"
+    env_file:
+      - .env

@@ -1,0 +1,27 @@
+{
+  "name": "plex-tamilmv-v2",
+  "version": "1.0.0",
+  "description": "Download new movies from 1tamilmv site",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "plex",
+    "1tamilmv",
+    "js",
+    "bot"
+  ],
+  "author": "khiruparaj",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.3.4",
+    "cheerio": "^1.0.0-rc.12",
+    "cron": "^2.2.0",
+    "dotenv": "^16.0.3",
+    "mysql2": "^3.1.2",
+    "path": "^0.12.7",
+    "request-promise": "^4.2.6",
+    "rss-parser": "^3.12.0"
+  }
+}

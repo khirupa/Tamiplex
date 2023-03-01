@@ -1,0 +1,8 @@
+# Ignore the db_data/ directory
+db_data/
+
+# Ignore the .env file
+.env
+
+# Ignore the node_modules/ directory
+node_modules/
