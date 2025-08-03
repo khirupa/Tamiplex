@@ -24,19 +24,27 @@ const scrapeSite = async (url) => {
 };
 
 async function handleAddMovie(rows, name, year, imdb_id, magnet, quality, language) {
-    var filePath = `${name} (${year}) {imdb-${imdb_id}}/${name} (${year}) {imdb-${imdb_id}} - ${language}`;
     if (imdb_id == null) {
         filePath = `${name} (${year})/${name} (${year}) - ${language}`;
+    }
+    else {
+        var filePath = `${name} (${year}) {imdb-${imdb_id}}/${name} (${year}) {imdb-${imdb_id}} - ${language}`;
     }
 
     if (rows.length === 0) {
 
         console.log(`Movie "${name}" (${year}) with IMDB ID "${imdb_id}" not found in database`);
         console.log(`Adding ${name}" (${year}) with IMDB ID "${imdb_id}" to table movies...`)
-        addMovie(name, year, imdb_id, quality, language);
+        qbittorrent.addMovieToTorrent(magnet, filePath);
+
+        let torrentUrl = process.env.TORRENT_URL
+        const { data } = await axios.get(`${torrentUrl}/api/v2/torrents/info`);
+        const torrent = data.find(t => t.name.includes(name));
+
+        addMovie(name, year, imdb_id, quality, language, torrent.hash);
         folderOperations.createFolder(filePath);
         console.log(filePath)
-        qbittorrent.addMovieToTorrent(magnet, filePath);
+
         console.log("Added")
 
         return null;
@@ -90,11 +98,11 @@ async function mainWrapper() {
     console.log("Application started")
     const urls = [
         {
-            link: 'https://www.1tamilmv.wtf/index.php?/forums/forum/10-predvd-dvdscr-cam-tc/page/1/all.xml',
+            link: 'https://www.1tamilmv.se/index.php?/forums/forum/10-predvd-dvdscr-cam-tc/page/1/all.xml',
             language: 'Tamil'
         },
         {
-            link: 'https://www.1tamilmv.wtf/index.php?/forums/forum/11-web-hd-itunes-hd-bluray/all.xml',
+            link: 'https://www.1tamilmv.se/index.php?/forums/forum/11-web-hd-itunes-hd-bluray/all.xml',
             language: 'Tamil'
         }
     ];
@@ -104,6 +112,11 @@ async function mainWrapper() {
     return;
 }
 
-// Schedule the bot to run every 5 minutes
-const job = new CronJob(`${process.env.CRON_EXPRESSION}`, mainWrapper, null, true);
-job.start();
+mainWrapper()
+
+// // Schedule the bot to run every 5 minutes
+// const job = new CronJob(`${process.env.CRON_EXPRESSION}`, mainWrapper, null, true);
+// job.start();
+
+// fix duplicates in db without imdb id
+//delete movies older than 30 days

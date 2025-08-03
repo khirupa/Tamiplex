@@ -35,15 +35,22 @@ async function updateMovieQuality(name, year, quality, language) {
 }
 
 
-async function addMovie(name, year, imdb_id, quality, language) {
+async function addMovie(name, year, imdb_id, quality, language, info_hash) {
     try {
         const connection = await mysql.createConnection(mysqlOptions);
 
         const sql = `
-        INSERT INTO ${process.env.DB_TABLE} (name, year, imdb_id, quality, language)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO ${process.env.DB_TABLE} (name, year, imdb_id, quality, language, info_hash)
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
-        const values = [name, year, imdb_id, quality, language];
+        const values = [
+            name,
+            year,
+            imdb_id ?? null,      // This ensures `undefined` becomes `null`
+            quality ?? null,
+            language ?? null,
+            info_hash ?? null
+        ];
 
         const [rows, fields] = await connection.execute(sql, values);
         console.log(`${rows.affectedRows} row(s) inserted`);
@@ -59,10 +66,16 @@ async function getMovie(name, year, imdb_id, quality, magnet) {
     try {
         const connection = await mysql.createConnection(mysqlOptions);
 
-        const [rows, fields] = await connection.execute(
-            `SELECT * FROM ${process.env.DB_TABLE} WHERE name = ? AND year = ? AND imdb_id = ?`,
-            [name, year, imdb_id]
-        );
+        if (imdb_id === null) {
+            query = `SELECT * FROM ${process.env.DB_TABLE} WHERE name = ? AND year = ? AND imdb_id IS NULL`;
+            params = [name, year];
+        } else {
+            query = `SELECT * FROM ${process.env.DB_TABLE} WHERE name = ? AND year = ? AND imdb_id = ?`;
+            params = [name, year, imdb_id];
+        }
+
+        const [rows, fields] = await connection.execute(query, params);
+
         connection.end();
         return rows
     } catch (error) {

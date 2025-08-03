@@ -6,7 +6,10 @@ CREATE TABLE IF NOT EXISTS movies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     year INT NOT NULL,
-    imdb_id VARCHAR(255) NOT NULL,
-    quality VARCHAR(255) NOT NULL,
-    language VARCHAR(255) NOT NULL
+    imdb_id VARCHAR(255) NULL,
+    quality VARCHAR(255)  NULL,
+    language VARCHAR(255)  NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE movies ADD COLUMN info_hash VARCHAR(255);

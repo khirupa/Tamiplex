@@ -22,8 +22,8 @@ async function addMovieToTorrent(magnetLink, savePath) {
     };
 
     // console.log('\n In add torrent:\n\n', options.formData);
-    let res = await rp(options).then().catch((err) => console.log('add tor err: ', err));
-    return res;
+    // let res = await rp(options).then().catch((err) => console.log('add tor err: ', err));
+    // return res;
 }
 
 async function pauseTorrent(infoHash) {
